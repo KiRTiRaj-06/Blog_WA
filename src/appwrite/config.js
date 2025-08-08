@@ -11,7 +11,7 @@ export class DBService{
                 .setEndpoint(Conf.awUrl)
                 .setProject(Conf.awPROID);
             this.databases = new Databases(this.client);
-                this.Bucket = new Storage(this.client);
+                this.bucket = new Storage(this.client);
         }
         
         async createPost(title, content, slug, userId,featuredImage,status) {

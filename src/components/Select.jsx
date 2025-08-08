@@ -1,11 +1,11 @@
 import React, { useId } from 'react'
 
-const Select= (
+const Select= ({
     options,
     label,
     ref,
     className,
-    ...props
+    ...props}
 ) => {
     const id = useId()
   return (
@@ -20,9 +20,9 @@ const Select= (
                         border border-gray-200 w-full ${className}`}
                     {...props}
                     >
-                        {options?.map(option => 
+                        {options?.map((option) => 
                             <option key={option} value={option}>
-                                    {option.label}
+                                    {option}
                             </option>
                         ) }
                 </select>

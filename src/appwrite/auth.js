@@ -17,7 +17,7 @@ export class Authservice{
                 ID.unique(),email,password,name);
 
                 if(userAccount) {
-                    return this.Login(email, password);
+                    return this.login(email, password);
                 } else {
                     return userAccount;
                 }

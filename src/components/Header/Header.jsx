@@ -25,19 +25,19 @@ function Header() {
           },
           {
             name: 'All Post',
-            slug:'/allPost',
+            slug:'/all-posts',
             active: authStatus
           },
           {
             name: 'Add Post',
-            slug:'/addPost',
+            slug:'/add-post',
             active: authStatus
           }
         ]
 
 
         return (
-           <header className='py-3 shadow bg-gray-500'>
+          <header className='py-3 shadow fixed w-full bg-gray-500 h-16 '>
       <Container>
         <nav className='flex'>
           <div className='mr-4'>
@@ -66,35 +66,6 @@ function Header() {
         </nav>
         </Container>
     </header>
-          // <Header className='py-3 bg-gray-500'>
-          //     <Container>
-          //           <nav className='flex flex-wrap  justify-around items-center w-full'>
-          //               <div className='mr-4'>
-          //                   <Link to='/'>
-          //                     <Logo  width='60px'/>
-          //                   </Link>
-          //               </div>
-          //               <ul className='flex ml-auto'>
-          //                 {navItems.map( item =>
-          //                   item.active? (
-          //                     <li key={item.name}>
-          //                       <button 
-          //                       className='w-20 px-3 mx-3 h-auto text-xl bg-cyan-400 border-purple-500 rounded-2xl '
-          //                       onClick={()=> navigate(item.slug) }>
-          //                         {item.name}
-          //                       </button>
-          //                     </li>
-          //                   ) : null
-          //                 )}
-          //                 {authStatus && (
-          //                   <li>
-          //                     <LogoutBtn />
-          //                   </li>
-          //                 ) }
-          //               </ul>
-          //           </nav>
-          //     </Container>
-          // </Header>
   )
 }
 

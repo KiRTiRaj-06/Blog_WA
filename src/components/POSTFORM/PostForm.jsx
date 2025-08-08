@@ -15,9 +15,10 @@ function PostForm({post}) {
             }
         })
         const navigate = useNavigate()
-        const userData = useSelector(state => state.user.userData)
+        const userData = useSelector(state => state.auth.userData)
 
         const submit = async(data) => {
+            try{
             if (post) {
                 const file =  data.image[0] ? await dbService.uploadFile(data.image[0]) : null ;
                 
@@ -26,41 +27,43 @@ function PostForm({post}) {
                 }
                 const dbpost = await dbService.updatePost( post.$id , {
                     ...data,
-                    featuredImage: file ? file.$id : undefined,
+                    featuredImage: file ? file.$id :  post.featuredImage,
                 })
                 if (dbpost) {
                     navigate(`/post/${dbpost.$id}`)
                 }
 
-            } else{
+            } else {
                 const file = await dbService.uploadFile(data.image[0])
                 if(file){
                     const fileId = file.$id
-                    const featuredImage = fileId
-                    const dbpost = await dbService.createPost({
-                        ...data,
-                        userId: userData.$id
-                    })
-                    if(dbpost) navigate(`/post/${dbpost.$id}`)
+                    data.featuredImage = fileId
+                    const dbpost = await dbService.createPost({...data,userId: userData.$id})
+                    if(dbpost) navigate(`/post/${dbpost.$id}`);
+                        else alert('Post not created')
                 }
+            }
+            }catch (error) {
+                console.error('Error submitting post:', error)
+                alert('An error occurred while submitting the post.')
             }
         }
         
-        const slugTransform = useCallback(value=> {
-            if(value && typeof value ==='string'){
-                return value
+    const slugTransform = useCallback((value) => {
+        if (value && typeof value === "string")
+            return value
                 .trim()
                 .toLowerCase()
-                .replace('/^[a-zA-z\d\s]+ /g','-')
-                .replace('/\s/g','-')
-            }
-            return ' '
-        },[])
+                .replace(/[^a-zA-Z\d\s]+/g, "-")
+                .replace(/\s/g, "-");
+
+        return "";
+    }, []);
 
         React.useEffect (()=>{
                 const subscription = watch((value ,{name}) => {
                     if (name ==='title') {
-                        setValue('slug',slugTransform(value.title, { shouldValidate: true } ))
+                        setValue('slug',slugTransform(value.title), { shouldValidate: true } )
                     }
                 })
                 return () => {
@@ -69,16 +72,16 @@ function PostForm({post}) {
         },[watch,slugTransform,setValue])
 
     return (
-         <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
+         <form onSubmit={handleSubmit(submit)} className="flex flex-wrap text-white">
             <div className="w-2/3 px-2">
                 <Input
-                    label="Title :"
+                    label="TITLE :"
                     placeholder="Title"
                     className="mb-4"
                     {...register("title", { required: true })}
                 />
                 <Input
-                    label="Slug :"
+                    label="SLUG :"
                     placeholder="Slug"
                     className="mb-4"
                     {...register("slug", { required: true })}
@@ -86,7 +89,7 @@ function PostForm({post}) {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
                     }}
                 />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+                <RTE  label="Content :" name="content" control={control} defaultValue={getValues("content")} />
             </div>
             <div className="w-1/3 px-2">
                 <Input
@@ -94,12 +97,12 @@ function PostForm({post}) {
                     type="file"
                     className="mb-4"
                     accept="image/png, image/jpg, image/jpeg, image/gif"
-                    {...register("image", { required: !post })}
+                    {...register("image", { required:  !post && !getValues("featuredImage") })}
                 />
-                {post && (
+                {post && post.featuredImage &&(
                     <div className="w-full mb-4">
                         <img
-                            src={appwriteService.getFilePreview(post.featuredImage)}
+                            src={dbService.getFilePreview(post.featuredImage)}
                             alt={post.title}
                             className="rounded-lg"
                         />
@@ -111,7 +114,7 @@ function PostForm({post}) {
                     className="mb-4"
                     {...register("status", { required: true })}
                 />
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full hover:bg-green-600">
                     {post ? "Update" : "Submit"}
                 </Button>
             </div>

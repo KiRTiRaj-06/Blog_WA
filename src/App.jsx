@@ -10,9 +10,10 @@ import { Outlet } from 'react-router-dom'
 function App() {
       const [loading ,setLoading] = useState(false)
       const dispatch = useDispatch()
+      const userData =  authService.getCurrentUser()
 
       React.useEffect(()=> {
-          authService.getCurrentUser()
+        const userData =  authService.getCurrentUser()
           .then(()=>{
             if (userData) {
               dispatch(()=> login({userData}))
@@ -25,11 +26,13 @@ function App() {
 
     return  !loading ?
     (
-      <div className=' min-h-screen flex flex-wrap justify-center items-center'>
+      <div className=' h-screen flex flex-wrap justify-center items-center bg-black'>
         <div className=' w-full block'>
         <Header/>
-          <main>
-            { <Outlet />}
+          <main className='flex flex-wrap w-full  h-min-600 h-auto  justify-center items-center border border-teal-400 pt-16'>
+            {/* { userData? <h1 className='"text-white text-4xl font-bold shadow-blue-400 hover:text-teal-300 transition-colors duration-300 ease-in '>
+              LOGIN TO SEE THE BLOGS</h1> :  null} */}
+              <Outlet />
           </main>
         <Footer/>
         </div>
